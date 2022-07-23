@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+
+    oraclelinux:
+        container_name: dc-orl-base-systemd
+        restart: unless-stopped
+        hostname: dc-orl-base-systemd
+        privileged: True
+        build:
+            context: ./build
+            dockerfile: Dockerfile.oraclelinux
+            args:
+                #IMAGE_VERSION: latest
+                IMAGE_VERSION: 8.6
+                ### If need root access, set a password
+                ROOT_USER_PASSWORD: changeme
+                ### If need to add another user, set the parameters
+                #ADD_USER_NAME: adminus
+                #ADD_USER_PASSWORD: changeme
+                #ADD_USER_SUDO: "yes"
+        networks:
+            - dc-net
+        ports:
+            - 43022:2222
+        volumes:
+            - /etc/localtime:/etc/localtime:ro
+            - /sys/fs/cgroup:/sys/fs/cgroup:ro
+            #- volume-name:/inside-container-dir
+
+
+#volumes:
+#  volume-name:
+#    driver: local
+#    driver_opts:
+#      type: "none"
+#      o: "bind"
+#      device: "./dc-workspace-dir"
+
+
+networks:
+    dc-net:
+        name: dc-net
+        ipam:
+            driver: default
+            ### If need set special IP Net Address
+            #config:
+            #    - subnet: 172.16.1.0/24
